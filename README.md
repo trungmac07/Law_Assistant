@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ```
 
 ### Data and Set Up
-Download the data file from [here](here), extract into the Law_Assistant/Django_Server directory
+Download the data file from [here](https://drive.google.com/drive/folders/1Th0Cy7XbfjKMbIjmA5R-qII4IZLugJnb?usp=sharing), extract into the Law_Assistant/Django_Server directory
 
 Open the file .key and paste your OpenAI organization (first line) and API key (second line)
 
