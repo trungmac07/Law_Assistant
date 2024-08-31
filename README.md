@@ -36,9 +36,14 @@ pip install -r requirements.txt
 ```
 
 ### Data and Set Up
-Download the data file from [here](here), extract into the Law_Assistant/Django_Server directory
+Download the data directory from [here.](https://drive.google.com/drive/folders/1Th0Cy7XbfjKMbIjmA5R-qII4IZLugJnb?usp=sharing)
 
-Open the file .key and paste your OpenAI organization (first line) and API key (second line)
+Extract the `preprocessed_laws.zip` and `embedding_model` inside - These are legal documents and a pre-trained embedding model.
+
+Open the file .key and paste your OpenAI organization (first line) and API key (second line).
+
+Then paste `data` directory into the `Law_Assistant/Django_Server/`.
+
 
 ### Apply Migrations
 
@@ -50,3 +55,22 @@ python manage.py migrate
 ```sh
 python manage.py runserver
 ```
+
+## Usage
+
+### API Endpoints
+
+POST /chat/
+Submit a legal question to the backend, which retrieves relevant documents and returns a streamed response from the LLM.
+
+### Request Body:
+```sh
+{
+  "question": "Các hành vi nào phải chịu trách nhiệm hình sự?"
+}
+```
+
+### Response:
+
+The response is streamed back as plain text. The content is generated based on the top retrieved legal documents.
+

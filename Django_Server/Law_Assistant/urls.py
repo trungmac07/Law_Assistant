@@ -1,9 +1,12 @@
 from django.contrib import admin
 from django.urls import path
-from .views import RAGAPIView
-
+from .views import RAGAPIView, SignUpAPIView, LoginAPIView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('chat/',  RAGAPIView.as_view(), name='rag-api')
+    path('api/chat/',  RAGAPIView.as_view(), name='rag-api'),
+    path('api/signup/', SignUpAPIView.as_view(), name='signup'),
+    path('api/login/', LoginAPIView.as_view(), name='login'),
+
 ]
