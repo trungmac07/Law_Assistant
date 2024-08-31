@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const storeToken = (refresh, access) => {
-  console.log(refresh + " ____ " +  access);
+  //console.log(refresh + " ____ " +  access);
   sessionStorage.setItem('refresh_token', refresh);
   sessionStorage.setItem('access_token', access);
 }
@@ -16,6 +16,7 @@ export const post = async (url, email, password) => {
         const response = await axios.post(url, JSON.stringify(data));
         console.log(response);
         storeToken(response.data["refresh_token"], response.data["access_token"]);
+        sessionStorage.setItem('user_id', response.data["user_id"]);
         //axios.defaults.headers.post["Authorization"] = response.data["access_token"];
         return response;
     } 

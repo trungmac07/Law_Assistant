@@ -3,22 +3,39 @@ import axios from 'axios';
 import { marked } from 'marked';
 import { home_controller } from '../controllers/home_controller';
 import { styles } from '../styles/home_styles';
+import ReactMarkdown from 'react-markdown'
 
 const HomeView = () => {
-  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
   const [input, setInput] = useState('');
   const [selectedConversation, setSelectedConversation] = useState([]);
+  const [isNewChat, setIsNewChat] = useState(true);
+  const [currentChatID, setCurrentChatID] = useState('');
   const chatContainerRef = useRef(null);
   
-  // Fetch chat history on component mount
+  // useEffect(() => {
+  //   const fetchConversation = async () => {
+  //     if(!isNewChat)
+  //     {
+  //       try {
+  //         const response = await home_controller("HISTORY");
+  //         setSelectedConversation(response.data);
+  //       } catch (error) {
+  //         console.error('Failed to fetch conversation', error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchConversation();
+  // }, [currentChatID]);
+                                                        
   useEffect(() => {
+    console.log(sessionStorage.getItem('access_token'));
     const fetchChatHistory = async () => {
       try {
-        const response = await axios.get('/api/chat-history');
-        setMessages(response.data);
-        if (response.data.length > 0) {
-          setSelectedConversation(response.data[0]); // Set the first conversation as selected
-        }
+        const response = await home_controller("HISTORY");
+        console.log(response.data);
+        setConversations(response.data);
       } catch (error) {
         console.error('Failed to fetch chat history', error);
       }
@@ -30,48 +47,53 @@ const HomeView = () => {
   // Handle sending messages
   const handleSend = async () => {
     if (input.trim()) {
-
-      const newMessage = { sender: 'user', text: input };
+      const text = input.trim();
       setInput('');
-      const updatedMessages = [...selectedConversation, newMessage];
-      setMessages(prevMessages => prevMessages.map(conv => 
-        conv === selectedConversation ? updatedMessages : conv
-      ));
-      setSelectedConversation(updatedMessages);
+
+      const oldMessages = [...selectedConversation]
+      let newMessages = [{ sender: 'user', text: text }, { sender: 'bot', text: "..." }];
+      let tmp = [...oldMessages, ...newMessages]
+      setSelectedConversation(tmp);
+   
 
       try 
       {
-        //console.log(selectedConversation);
-        setSelectedConversation([...updatedMessages, { sender: 'bot', text: "..." }]);
-        const response = await home_controller("SEND_MESSAGE", {"text" : input})
         
-        // let replyMessage = { sender: 'bot', text: "" };
-        // for await (const chunk of response.data)
-        // {
-        //   replyMessage.text += chunk.toString();
-        //   console.log(selectedConversation)
-        //   setSelectedConversation(prevMessages => [...prevMessages, replyMessage]);
-        // }
+        const data = {"user_id" : sessionStorage.getItem("user_id"), 
+                      "sender" : "user", 
+                      "text" : text, 
+                      "conversation_id" : isNewChat ? "new_conversation" : currentChatID}
+        if(isNewChat)
+            data["conversation_name"] = text.trim();
+        
+        
+        const response = await home_controller("SEND_MESSAGE", data)
+        
 
-        const replyMessage = { sender: 'bot', text: response.data };
-        setMessages(prevMessages => prevMessages.map(conv => 
-          conv === selectedConversation ? [...updatedMessages, replyMessage] : conv
-        ));
-        setSelectedConversation([...updatedMessages, replyMessage]);
-        
+        if(isNewChat)
+        {
+            setIsNewChat(false)
+            setCurrentChatID(response.headers.conversation_id)
+        }
+
+        newMessages = [{ sender: 'user', text: text }, { sender: 'bot', text: response.data }];
+
+        setSelectedConversation([...oldMessages, ...newMessages]);
+
 
       } catch (error) {
         console.error('Failed to send message', error);
-        const errorMessage = { sender: 'bot', text: 'Sorry, there was an error sending your message.' };
-        const updatedWithError = [...updatedMessages, errorMessage];
-        setMessages(prevMessages => prevMessages.map(conv => 
-          conv === selectedConversation ? updatedWithError : conv
-        ));
+        const errorMessage = [{ sender: 'user', text: text },  {sender: 'bot', text: 'Sorry, there was an error sending your message.' }];
+        const updatedWithError = [...oldMessages, errorMessage];
+   
         setSelectedConversation(updatedWithError);
+        //console.log(selectedConversation)
       }
 
       
     }
+
+    
   };
 
   // Handle pressing Enter to send the message
@@ -90,7 +112,7 @@ const HomeView = () => {
 
   // Render message text with Markdown formatting
   const renderMessage = (text) => {
-    return { __html: marked(text) };
+    return {__html: marked(text)};
   };
   
   return (
@@ -98,13 +120,13 @@ const HomeView = () => {
       <div style={styles.sidebar}>
         <h2 style={styles.sidebarTitle}>Conversations</h2>
         <div style={styles.historyList}>
-          {messages.map((conversation, index) => (
+          {conversations.map((conversation, index) => (
             <div
               key={index}
               style={styles.historyItem}
               onClick={() => setSelectedConversation(conversation)}
             >
-              Conversation {index + 1}
+              {conversation["conversation_name"]}
             </div>
           ))}
         </div>
@@ -122,6 +144,8 @@ const HomeView = () => {
                 }}
                 dangerouslySetInnerHTML={renderMessage(msg.text)}
               />
+                
+           
             ))}
           </div>
           <div style={styles.inputContainer}>

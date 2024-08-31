@@ -26,7 +26,7 @@ export const styles = {
       overflowY: 'auto',
     },
     historyItem: {
-      padding: '10px',
+      padding: '17px',
       borderRadius: '8px',
       margin: '5px 0',
       cursor: 'pointer',
@@ -39,10 +39,11 @@ export const styles = {
       justifyContent: 'center',
       alignItems: 'center',
       padding: '20px',
+      textOverflow: 'ellipsis',
     },
     chatFrame: {
       width: '70%',
-      maxWidth: '800px',
+      maxWidth: '100%',
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -60,7 +61,7 @@ export const styles = {
       overflowY: 'auto',
     },
     message: {
-      maxWidth: '90%',
+      maxWidth: '70%',
       margin: '5px 0',
       padding: '5px 15px',
       borderRadius: '15px',
