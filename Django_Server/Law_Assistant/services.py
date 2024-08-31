@@ -25,7 +25,7 @@ class RAGService:
         self.model = SentenceTransformer(
             model_path, device=self.device, truncate_dim = truncate_dim
         )
-        self.embedding_docs = torch.load(vectordb_path).to(self.device)
+        self.embedding_docs = torch.load(vectordb_path, weights_only=False).to(self.device)
 
         if(self.embedding_docs.shape[-1] != truncate_dim):
             raise ValueError(f"The embedding database shape does not match the model's truncate dimension. {self.embedding_docs.shape[-1]} and {truncate_dim}")

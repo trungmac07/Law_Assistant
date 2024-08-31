@@ -3,7 +3,7 @@
 ##### APP CONFIG #####
 KEY_PATH = "./data/.key"
 LAW_DOCS_PATH = "./data/preprocessed_laws"
-TOP_K = 5
+TOP_K = 3
 TRUNCATE_DIM = 128
 MODEL_PATH = "./data/embedding_model"
 VECTORDB_PATH = "./data/vectordb_128.pt"

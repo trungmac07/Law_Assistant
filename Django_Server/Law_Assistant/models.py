@@ -50,3 +50,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+class Conversation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    conversation_name = models.CharField(max_length=100)
+    create_date = models.DateTimeField()
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    create_date = models.DateTimeField()
+    sender = models.CharField(max_length=4)
+    text = models.TextField()

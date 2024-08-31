@@ -64,6 +64,7 @@ CORS_ORIGIN_WHITELIST = (
 CORS_EXPOSE_HEADERS = (
     *default_headers,
     'Authorization',
+    'conversation_id',
 )
 CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOWED_ORIGINS = [
