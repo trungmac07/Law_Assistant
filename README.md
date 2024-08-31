@@ -5,7 +5,7 @@ This project provides a Django-based backend that integrates Retrieval-Augmented
 
 ## Features
 
-**Embedding Similarity:** Use my custom embedding model to compute embeddings for legal questions and documents, then determine the similarity between them to retrieve the most relevant documents for RAG. For more information about my embedding model, please visit my repository [here](`https://github.com/trungmac07/VN_Law_Embedding`)
+**Embedding Similarity:** Use my custom embedding model to compute embeddings for legal questions and documents, then determine the similarity between them to retrieve the most relevant documents for RAG. For more information about my embedding model, please visit my repository [here](https://github.com/trungmac07/VN_Law_Embedding)
 
 **Legal Question Answering:** Leverages RAG to retrieve relevant legal documents and generate responses using GPT-4.
 
