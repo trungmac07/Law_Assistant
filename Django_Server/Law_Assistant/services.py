@@ -66,7 +66,11 @@ class RAGService:
         top_k = cosine_similarities.topk(k)
         print(top_k)
         top_k_indices = top_k.indices
-        return top_k_indices
+        top_k_values = top_k.values
+        if(top_k_values[0] < 0.6):
+            return None
+        else:
+            return top_k_indices
     
     def retrieve_doc(self, index):
         if(index not in self.all_laws):
@@ -77,22 +81,25 @@ class RAGService:
         return self.all_laws[index]
     
     def generate_prompt(self, question, top_k_indices):
-        prompt = "Tôi cung cấp cho bạn một số văn bản pháp luật có liên quan như sau: \n\n"
-        
-        for k in top_k_indices:
-            print(k)
-            prompt += self.retrieve_doc(k) + "\n\n"
+        if(top_k_indices == None):
+            return question
+        else:
+            prompt = "Tôi cung cấp cho bạn một số văn bản pháp luật có liên quan như sau: \n\n"
+            
+            for k in top_k_indices:
+                print(k)
+                prompt += self.retrieve_doc(k) + "\n\n"
 
-        prompt += f"Từ những văn bản pháp luật trên, hãy giúp tôi trả lời cụ thể cho câu hỏi sau: \n\n{question}\n\n"
-        prompt += """
-    CHÚ Ý:
-    - Tôi cần câu trả lời cụ thể đầy đủ từ những thông tin vừa cung cấp.
-    - Trích dẫn rõ ràng các tên luật và điều, khoản.
-    - Nếu là các câu hỏi không liên quan đến pháp luật thì không cần dựa trên văn bản cung cấp.
-    - Nếu các văn bản không liên quan đến văn bản hoặc không cung cấp đủ thông tin thì hãy từ chối trả lời câu hỏi, không tự trả lời theo ý kiến riêng.
-    - Không nhắc gì về việc được cung cấp tài liệu.      
+            prompt += f"Từ những văn bản pháp luật trên, hãy giúp tôi trả lời cụ thể cho câu hỏi sau: \n\n{question}\n\n"
+            prompt += """
+CHÚ Ý:
+- Cần câu trả lời cụ thể đầy đủ từ những thông tin vừa cung cấp.
+- Trích dẫn rõ ràng các tên luật và điều, khoản.
+- Nếu các văn bản không liên quan đến văn bản hoặc không cung cấp đủ thông tin thì hãy từ chối trả lời câu hỏi, không tự trả lời theo ý kiến riêng.
+- Không nhắc gì về việc được cung cấp tài liệu.      
+
                 """
-        return prompt
+            return prompt
 
 
     def generate_response(self, prompt):
