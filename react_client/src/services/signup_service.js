@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 
-export const post = async (url, data) => {
+export const post_signup = async (url, data) => {
     try 
     {   
         data.gender = data.gender[0].toUpperCase()

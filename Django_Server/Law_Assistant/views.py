@@ -19,6 +19,8 @@ from rest_framework import generics, status
 
 from .serializers import *
 
+from django.utils import timezone
+import pytz
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -72,13 +74,13 @@ class RAGAPIView(APIView):
     def store_message(self, data):
         conversation_id = data["conversation_id"]
         if(conversation_id == "new_conversation"):
-            new_conversation = Conversation.objects.create(user_id=data["user_id"], create_date = datetime.datetime.now(), conversation_name = data["conversation_name"])
+            new_conversation = Conversation.objects.create(user_id=data["user_id"], create_date = timezone.now(), conversation_name = data["conversation_name"][:100])
             new_conversation.save()
             conversation_id = new_conversation.id
-            new_message = Message.objects.create(conversation_id=conversation_id, text = data["text"], sender = data["sender"],  create_date = datetime.datetime.now())
+            new_message = Message.objects.create(conversation_id=conversation_id, text = data["text"], sender = data["sender"],  create_date = timezone.now())
             new_message.save()
         else:
-            new_message = Message.objects.create(conversation_id = data["conversation_id"], text = data["text"], sender = data["sender"],  create_date = datetime.datetime.now())
+            new_message = Message.objects.create(conversation_id = data["conversation_id"], text = data["text"], sender = data["sender"],  create_date = timezone.now())
             new_message.save()
             
         return conversation_id
@@ -164,3 +166,21 @@ class ConversationHistoryAPIView(APIView):
 
         except:
             return Response("Error", status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ConversationAPIView(APIView):
+    serializer_class = ConversationSerializer
+    
+
+    def get(self, request):
+        c_id = request.query_params.get('conversation_id')
+
+        queryset = Message.objects.filter(conversation_id__exact = c_id).order_by('create_date')
+
+        try:
+            return JsonResponse(list(queryset.values()), safe=False)
+
+        except:
+            return Response("Error", status=status.HTTP_400_BAD_REQUEST)
+
+

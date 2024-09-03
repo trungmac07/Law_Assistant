@@ -4,6 +4,7 @@ import { marked } from 'marked';
 import { home_controller } from '../controllers/home_controller';
 import { styles } from '../styles/home_styles';
 import ReactMarkdown from 'react-markdown'
+import { FaPlusCircle } from "react-icons/fa";
 
 const HomeView = () => {
   const [conversations, setConversations] = useState([]);
@@ -30,19 +31,19 @@ const HomeView = () => {
   // }, [currentChatID]);
                                                         
   useEffect(() => {
-    console.log(sessionStorage.getItem('access_token'));
     const fetchChatHistory = async () => {
       try {
         const response = await home_controller("HISTORY");
-        console.log(response.data);
         setConversations(response.data);
+        
       } catch (error) {
         console.error('Failed to fetch chat history', error);
       }
     };
 
     fetchChatHistory();
-  }, []);
+
+  }, [isNewChat]);
 
   // Handle sending messages
   const handleSend = async () => {
@@ -64,7 +65,7 @@ const HomeView = () => {
                       "text" : text, 
                       "conversation_id" : isNewChat ? "new_conversation" : currentChatID}
         if(isNewChat)
-            data["conversation_name"] = text.trim();
+            data["conversation_name"] = text;
         
         
         const response = await home_controller("SEND_MESSAGE", data)
@@ -72,8 +73,10 @@ const HomeView = () => {
 
         if(isNewChat)
         {
-            setIsNewChat(false)
-            setCurrentChatID(response.headers.conversation_id)
+            const c_id = response.headers.conversation_id;
+            setIsNewChat(false);
+            setCurrentChatID(c_id)
+            
         }
 
         newMessages = [{ sender: 'user', text: text }, { sender: 'bot', text: response.data }];
@@ -95,6 +98,13 @@ const HomeView = () => {
 
     
   };
+
+  const retrieve_conversation = async (c_id) => {
+      const conv = await home_controller("RETRIEVE_CONVERSATION", {"conversation_id": c_id})
+      setSelectedConversation(conv.data);
+      setCurrentChatID(c_id);
+      setIsNewChat(false);
+  }
 
   // Handle pressing Enter to send the message
   const handleKeyPress = (event) => {
@@ -118,13 +128,20 @@ const HomeView = () => {
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
-        <h2 style={styles.sidebarTitle}>Conversations</h2>
+        <div style={styles.sidebarTitle}>
+          <h2 style={{margin : 20}}>Conversations</h2>
+          <button style = {{color: '#004d40', background:"transparent", border:"transparent", cursor: 'pointer',}}
+                  onClick={() => {setIsNewChat(true); setSelectedConversation([])}}>
+            <FaPlusCircle style={{fontSize:30, margin : 10}}/>
+          </button>
+        </div>
+        
         <div style={styles.historyList}>
           {conversations.map((conversation, index) => (
             <div
               key={index}
               style={styles.historyItem}
-              onClick={() => setSelectedConversation(conversation)}
+              onClick={() => retrieve_conversation(conversation["id"])}
             >
               {conversation["conversation_name"]}
             </div>
@@ -149,8 +166,8 @@ const HomeView = () => {
             ))}
           </div>
           <div style={styles.inputContainer}>
-            <input
-              style={styles.input}
+            <textarea
+              style={styles.textarea}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}

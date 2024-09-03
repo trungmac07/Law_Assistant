@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import RAGAPIView, SignUpAPIView, LoginAPIView, ConversationHistoryAPIView
+from .views import RAGAPIView, SignUpAPIView, LoginAPIView, ConversationHistoryAPIView, ConversationAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -9,5 +9,5 @@ urlpatterns = [
     path('api/signup/', SignUpAPIView.as_view(), name='signup'),
     path('api/login/', LoginAPIView.as_view(), name='login'),
     path('api/history/', ConversationHistoryAPIView.as_view(), name='history'),
-    
+    path('api/conversation/', ConversationAPIView.as_view(), name='conversation'),
 ]

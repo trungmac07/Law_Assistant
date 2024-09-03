@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-export const post = async (url, data) => {
+export const send_message = async (url, data) => {
     const token = sessionStorage.getItem('access_token')
     try {
         

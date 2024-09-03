@@ -1,9 +1,9 @@
-import { post } from '../services/signup_service';
+import { post_signup } from '../services/signup_service';
 
 export const signup = async (formdata) => {
     
     //alert();
-    return await post("api/signup/", formdata);
+    return await post_signup("api/signup/", formdata);
     // fetch('http://localhost:8000/api/signup/', 
     // {
     //     method: 'POST',

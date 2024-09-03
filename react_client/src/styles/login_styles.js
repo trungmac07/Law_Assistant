@@ -25,11 +25,12 @@ const Title = styled.h2`
 
 const Input = styled.input`
   width: 100% ;
-  padding: 15px 0px 15px 0px;
+  padding: 15px;
   margin: 10px 0px 10px 0px;
   border: 1px solid #b2dfdb;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 `;
 
 const Button = styled.button`

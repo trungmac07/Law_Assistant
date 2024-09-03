@@ -20,6 +20,10 @@ export const styles = {
       fontSize: '18px',
       fontWeight: 'bold',
       color: '#004d40',
+      display: 'flex',
+      //justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
     },
     historyList: {
       marginTop: '10px',
@@ -32,6 +36,7 @@ export const styles = {
       cursor: 'pointer',
       backgroundColor: '#e0f2f1',
       color: '#004d40',
+      textOverflow: 'ellipsis',
     },
     chatArea: {
       flex: 1,
@@ -67,28 +72,50 @@ export const styles = {
       borderRadius: '15px',
       color: '#004d40',
       fontSize: '17px',
-      lineHeight: '17px',
+      lineHeight: '21px',
       wordWrap: 'break-word',
       // Prevent XSS vulnerabilities
       whiteSpace: 'pre-wrap',
     },
     inputContainer: {
+      flex: 0.2,
       display: 'flex',
       alignItems: 'center',
       padding: '10px',
       borderTop: '1px solid #ccc',
       backgroundColor: '#ffffff',
+   
+    },
+    textarea : {
+      width: '100%', // Ensure the textarea fills the container width
+      height: '75%', // Set the height to 75% of its container
+      border: 'none',
+      outline: 'none',
+      padding: '15px',
+      fontSize: '19px',
+      borderRadius: '8px',
+      backgroundColor: '#e0f7fa',
+      resize: 'none', 
+      overflowWrap: 'break-word', // Ensures long words break onto the next line
+      wordWrap: 'break-word', // Ensures the text wraps within the box
+      whiteSpace: 'pre-wrap', // Preserves white spaces and wraps the text as needed
+      fontFamily : 'arial',
     },
     input: {
       flex: 1,
+      height: '75%',
       border: 'none',
       outline: 'none',
       padding: '10px',
-      fontSize: '21px',
+      fontSize: '17px',
       borderRadius: '8px',
       backgroundColor: '#e0f7fa',
+      textAlign: 'left',  
+      verticalAlign: 'top', 
     },
     sendButton: {
+      flex : 0.1,
+      height : "30%",
       marginLeft: '10px',
       padding: '10px 20px',
       backgroundColor: '#00acc1',
@@ -96,6 +123,7 @@ export const styles = {
       border: 'none',
       borderRadius: '8px',
       cursor: 'pointer',
+      fontSize: "17px"
     },
     '@media (max-width: 768px)': {
       sidebar: {

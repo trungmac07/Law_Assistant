@@ -32,8 +32,8 @@ const LoginView = () => {
     <LoginContainer>
       <LoginForm>
         <Title>Welcome to Legal Miracle!</Title>
-        <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button type="submit" onClick={loginClick} >Login</Button>
         <SignUpLink>
           Don’t have an account? <Link href="/signup">Sign Up</Link>
