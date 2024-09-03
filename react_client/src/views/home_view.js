@@ -12,6 +12,7 @@ const HomeView = () => {
   const [selectedConversation, setSelectedConversation] = useState([]);
   const [isNewChat, setIsNewChat] = useState(true);
   const [currentChatID, setCurrentChatID] = useState('');
+  const [currentMessage, setCurrentMessage] = useState('');
   const chatContainerRef = useRef(null);
   
   // useEffect(() => {
@@ -52,11 +53,10 @@ const HomeView = () => {
       setInput('');
 
       const oldMessages = [...selectedConversation]
-      let newMessages = [{ sender: 'user', text: text }, { sender: 'bot', text: "..." }];
-      let tmp = [...oldMessages, ...newMessages]
-      setSelectedConversation(tmp);
+      let newMessages = { sender: 'user', text: text };
+      let currentConversation = [...oldMessages, newMessages]
+      setSelectedConversation(currentConversation);
    
-
       try 
       {
         
@@ -68,8 +68,17 @@ const HomeView = () => {
             data["conversation_name"] = text;
         
         
-        const response = await home_controller("SEND_MESSAGE", data)
-        
+
+        const updateStream = (chunk) => {
+          setCurrentMessage(currentMessage => currentMessage + chunk);
+        };
+
+        const response = await home_controller("SEND_MESSAGE", data, {
+          "updateStream" : updateStream, 
+          "setSelectedConversation" : setSelectedConversation,
+          "selectedConversation" : currentConversation,
+          "setCurrentMessage" : setCurrentMessage
+        })
 
         if(isNewChat)
         {
@@ -78,11 +87,6 @@ const HomeView = () => {
             setCurrentChatID(c_id)
             
         }
-
-        newMessages = [{ sender: 'user', text: text }, { sender: 'bot', text: response.data }];
-
-        setSelectedConversation([...oldMessages, ...newMessages]);
-
 
       } catch (error) {
         console.error('Failed to send message', error);
@@ -118,11 +122,14 @@ const HomeView = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, currentMessage]);
 
   // Render message text with Markdown formatting
   const renderMessage = (text) => {
-    return {__html: marked(text)};
+    if(text)
+      return {__html: marked(text)};
+    else
+      return {__html: ""};
   };
   
   return (
@@ -131,7 +138,7 @@ const HomeView = () => {
         <div style={styles.sidebarTitle}>
           <h2 style={{margin : 20}}>Conversations</h2>
           <button style = {{color: '#004d40', background:"transparent", border:"transparent", cursor: 'pointer',}}
-                  onClick={() => {setIsNewChat(true); setSelectedConversation([])}}>
+                  onClick={() => {setIsNewChat(true); setSelectedConversation([]); setCurrentMessage('')}}>
             <FaPlusCircle style={{fontSize:30, margin : 10}}/>
           </button>
         </div>
@@ -164,6 +171,15 @@ const HomeView = () => {
                 
            
             ))}
+            {currentMessage ? (<div
+                key={"current_message"}
+                style={{
+                  ...styles.message,
+                  alignSelf: 'flex-start',
+                  backgroundColor: '#80deea',
+                }}
+                dangerouslySetInnerHTML={renderMessage(currentMessage)}
+              />) : null}
           </div>
           <div style={styles.inputContainer}>
             <textarea
