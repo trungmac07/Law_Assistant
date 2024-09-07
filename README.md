@@ -52,6 +52,14 @@ Download the data directory from [here.](https://drive.google.com/drive/folders/
 
 Extract the `preprocessed_laws.zip` and `embedding_model` inside - These are legal documents and a pre-trained embedding model.
 
+**Note**: Model can be loaded from my HuggingFace:
+
+```python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("truro7/vn-law-embedding")
+```
+
 Open the file .key and paste your OpenAI organization (first line) and API key (second line).
 
 Then paste `data` directory into the `Law_Assistant/Django_Server/`.
